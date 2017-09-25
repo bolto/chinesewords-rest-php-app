@@ -258,14 +258,14 @@ chinesewordControllers.controller('TestCtrl', ['$scope', 'Test', 'WordlistAll', 
             return list;
         };
         $scope.getExistingIdList = function getExistingIdList(){
-            // returns a list of currently selected wordlists for the given test
+            // returns a list of currently associated wordlists for the given test
             var list = [];
-            if($scope.test.wordlists === undefined)
+            if($scope.testWordlists === undefined)
                 return list;
-            if($scope.test.wordlists.length === undefined)
+            if($scope.testWordlists.length === undefined)
                 return list;
-            for(var i = 0; i < $scope.test.wordlists.length; i++){
-                list[list.length] = $scope.test.wordlists[i].id;
+            for(var i = 0; i < $scope.testWordlists.length; i++){
+                list[list.length] = $scope.testWordlists[i].id;
             }
             return list;
         };
@@ -316,39 +316,33 @@ chinesewordControllers.controller('TestCtrl', ['$scope', 'Test', 'WordlistAll', 
             return true;
         };
         $scope.updateStatus = function updateStatus(){
-            if($scope.wordlists.length == 0){
-                $scope.isDirty = false;
-                return;
-            }
-            var selIdList = $scope.getSelectedIdList();
-            var curIdList = $scope.getExistingIdList();
-            if(selIdList.length != curIdList.length){
-                $scope.isDirty = true;
-                return;
-            }
-            // remove matching entries from both selIdList and curIdList
-            // if the remaining lists do not match, then the overall selection has changed
-            // thus it is dirty and save button should be enabled.
-            for(var i=(selIdList.length-1); i>=0 ; i--){
-                var index = curIdList.indexOf(selIdList[i]);
-                if (index > -1) {
-                    curIdList.splice(index, 1);
-                    selIdList.splice(i, 1);
+            for(var i = 0; i < $scope.wordlists.length; i++){
+                if ($scope.isExistingWordlist($scope.wordlists[i]) != $scope.wordlists[i].selected){
+                    $scope.isDirty = true;
+                    return;
                 }
             }
-            $scope.isDirty = !(curIdList.length == 0 && selIdList.length == 0);
+            // not sure why this line is needed but save button doesn't get enabled/disabled
+            // correctly without this line.
+            $scope.isDirty = false;
         };
         $scope.save = function save(){
-            $scope.testWordlists = [];
-            for(var i = 0; i < $scope.wordlists.length; i++){
-                if($scope.wordlists[i].selected){
-                    $scope.testWordlists.push($scope.wordlists[i]);
-                    $scope.testWordlists[$scope.testWordlists.length - 1].selected = undefined;
+            /**
+             * Go through wordlist entries with checkboxes.  Delete unselected entries and
+             * put (save) selected entries.
+             */
+            for (var index = 0; index < $scope.wordlists.length; ++index) {
+                var newTestWordlist = new TestWordlist();
+                var wordlistId = $scope.wordlists[index].id;
+                if($scope.wordlists[index].selected){
+                    if (!$scope.isExistingWordlist($scope.wordlists[index]))
+                        newTestWordlist.$update({testId:$scope.test.id, wordlistId:wordlistId});
+                }else{
+                    if ($scope.isExistingWordlist($scope.wordlists[index]))
+                        newTestWordlist.$delete({testId:$scope.test.id, wordlistId:wordlistId});
                 }
             }
-            $scope.testWordist.$update({testId:$scope.test.id}, function(response){
-                $scope.showWordlists($scope.test);
-            });
+            $scope.showWordlists($scope.test);
         };
         $scope.list = function list(){
             $scope.total_words = 0;

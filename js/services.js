@@ -53,12 +53,12 @@ chinesewordServices.factory('WordlistWord', ['$resource',
     }]);
 chinesewordServices.factory('TestWordlist', ['$resource',
     function($resource){
-        return $resource(server_url + '/test/:testId/wordlist', {}, {
-            list: {method:'GET', params:{testId:'@testId'}, isArray:true},
-            get: {method:'GET', params:{testId:'@testId'}, isArray:false},
-            post:{method:'POST', params:{testId:''}},
-            update: {method:'PUT', params:{testId:'@testId'}},
-            "delete":{method:'DELETE', params:{testId:'@testId'}}
+        return $resource(server_url + '/test/:testId/wordlist/:wordlistId', {}, {
+            list: {method:'GET', params:{testId:'@testId', wordlistId:''}, isArray:true},
+            get: {method:'GET', params:{testId:'@testId', wordlistId:'@wordlistId'}, isArray:false},
+            post:{method:'POST', params:{testId:'@testId'}},
+            update: {method:'PUT', params:{testId:'@testId', wordlistId:'@wordlistId'}},
+            delete:{method:'DELETE', params:{testId:'@testId', wordlistId:'@wordlistId'}}
         });
     }]);
 
