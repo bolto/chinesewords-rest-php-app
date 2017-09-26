@@ -344,30 +344,38 @@ chinesewordControllers.controller('TestCtrl', ['$scope', 'Test', 'WordlistAll', 
             }
             $scope.showWordlists($scope.test);
         };
+        $scope.listWordsFromWordlist = function listWordsFromWordlist(wordlistId){
+            return WordlistWord.list({wordlistId:wordlistId}, function (response) {
+
+            });
+        };
         $scope.list = function list(){
             $scope.total_words = 0;
             var words = [];
             $scope.lines = [];
-            for(var i = 0; i < $scope.test.wordlists.length; i++){
-                for(var j = 0; j < $scope.test.wordlists[i].words.length; j++){
-                    var word = $scope.test.wordlists[i].words[j];
-                    word.isShowPingyingSelect = false;
-                    if(WordUtils.hasPingying(word))
-                        $scope.total_words ++;
-                    word.formatted_word = WordUtils.toFormattedWord(word, WordUtils.FormatStyle.STANDARD);//WordUtils
-                    if((word.symbol == undefined || word.symbol.trim() == "")){
-                        if(words.length > 0){
-                            $scope.lines.push(words);
-                            words = [];
+
+            for(var i = 0; i < $scope.testWordlists.length; i++){
+                WordlistWord.list({wordlistId:$scope.testWordlists[i].wordlist_id}, function (response) {
+                    angular.forEach(response, function (item) {
+                        var word = item;
+                        word.isShowPingyingSelect = false;
+                        if(WordUtils.hasPingying(word))
+                            $scope.total_words ++;
+                        word.formatted_word = WordUtils.toFormattedWord(word, WordUtils.FormatStyle.STANDARD);//WordUtils
+                        if((word.symbol == undefined || word.symbol.trim() == "")){
+                            if(words.length > 0){
+                                $scope.lines.push(words);
+                                words = [];
+                            }
+                        }else{
+                            words.push(word);
                         }
-                    }else{
-                        words.push(word);
+                    });
+                    if(words.length > 0){
+                        $scope.lines.push(words);
+                        words = [];
                     }
-                }
-                if(words.length > 0){
-                    $scope.lines.push(words);
-                    words = [];
-                }
+                });
             }
             $scope.showWords();
         };

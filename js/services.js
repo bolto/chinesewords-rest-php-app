@@ -46,8 +46,8 @@ chinesewordServices.factory('WordPingying', ['$resource',
     }]);
 chinesewordServices.factory('WordlistWord', ['$resource',
     function($resource){
-        return $resource(server_url + '/wordlistword/:id', {}, {
-            get: {method:'GET', params:{id:'@id'}},
+        return $resource(server_url + '/wordlist/:wordlistId/word/:wordId', {}, {
+            list: {method:'GET', params:{wordlistId:'@wordlistId', wordId:'' }, isArray:true},
             update: {method:'PUT', params:{id:'@id'}}
         });
     }]);
