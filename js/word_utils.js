@@ -60,10 +60,10 @@ chinesewordCommonUtils.factory('WordUtils', ['PingyingCharacter', 'Tone', functi
         if(root.hasPingying(word)){
             switch(formatStyle){
                 case root.FormatStyle.STANDARD:
-                    fw.py = root.toFormattedPingying(word.wordPingyingId.pingying);
+                    fw.py = root.toFormattedPingying(word.pingying);
                     break;
                 case root.FormatStyle.EDIT:
-                    fw.py = root.toFormattedPingyingForEdit(word.wordPingyingId.pingying);
+                    fw.py = root.toFormattedPingyingForEdit(word.pingying);
                     break;
                 default:
                     break;
@@ -72,15 +72,15 @@ chinesewordCommonUtils.factory('WordUtils', ['PingyingCharacter', 'Tone', functi
 
         return fw;
     }
-    root.hasPingying = function hasPingying(word){
-        return !(typeof word.wordPingyingId == 'undefined' || word.wordPingyingId == null);
+    root.hasPingying = function hasPingying(wordlistWord){
+        return !(typeof wordlistWord.pingying_id == 'undefined' || wordlistWord.pingying_id == null);
     }
     root.toFormattedPingyingStr = function toFormattedPingyingStr(py){
         var str = '';
-        str += root.pingying_character_lut[py.firstPyId];
-        str += root.pingying_character_lut[py.secondPyId];
-        str += root.pingying_character_lut[py.thirdPyId];
-        str += root.tone_lut[py.toneId];
+        str += root.pingying_character_lut[py.first_py_id];
+        str += root.pingying_character_lut[py.second_py_id];
+        str += root.pingying_character_lut[py.third_py_id];
+        str += root.tone_lut[py.tone_id];
         return str;
     }
     root.toFormattedPingying = function toFormattedPingying(py){
@@ -88,16 +88,16 @@ chinesewordCommonUtils.factory('WordUtils', ['PingyingCharacter', 'Tone', functi
             return null;
         var py_str = '';
         var tone_str = '';
-        if(py.firstPyId != 38){
-            py_str += root.pingying_character_lut[py.firstPyId];
+        if(py.first_py_id != 38){
+            py_str += root.pingying_character_lut[py.first_py_id];
         }
-        if(py.secondPyId != 38){
-            py_str += root.pingying_character_lut[py.secondPyId];
+        if(py.second_py_id != 38){
+            py_str += root.pingying_character_lut[py.second_py_id];
         }
-        if(py.thirdPyId != 38){
-            py_str += root.pingying_character_lut[py.thirdPyId];
+        if(py.third_py_id != 38){
+            py_str += root.pingying_character_lut[py.third_py_id];
         }
-        tone_str += root.tone_lut[py.toneId];
+        tone_str += root.tone_lut[py.tone_id];
         //alert("pys: " + py_str + ".  tone:" + tone_str);
 
         var fpy = new Object();
@@ -110,26 +110,26 @@ chinesewordCommonUtils.factory('WordUtils', ['PingyingCharacter', 'Tone', functi
         fpy.tone = '';
         if(py_str.length == 1){
             fpy.three = py_str;
-            if(py.toneId == 5){
+            if(py.tone_id == 5){
                 fpy.twoBold = tone_str;
-            }else if(py.toneId != 1){
+            }else if(py.tone_id != 1){
                 fpy.tone = tone_str;
             }
         }else if(py_str.length == 2){
             fpy.two = py_str[0];
             fpy.three = py_str[1];
-            if(py.toneId == 5){
+            if(py.tone_id == 5){
                 fpy.one = tone_str;
-            }else if(py.toneId != 1){
+            }else if(py.tone_id != 1){
                 fpy.tone = tone_str;
             }
         }else if(py_str.length == 3){
             fpy.two = py_str[0];
             fpy.three = py_str[1];
             fpy.four = py_str[2];
-            if(py.toneId == 5){
+            if(py.tone_id == 5){
                 fpy.one = tone_str;
-            }else if(py.toneId != 1){
+            }else if(py.tone_id != 1){
                 fpy.tone = tone_str;
             }
         }
@@ -140,16 +140,16 @@ chinesewordCommonUtils.factory('WordUtils', ['PingyingCharacter', 'Tone', functi
             return null;
         var py_str = '';
         var tone_str = '';
-        if(py.firstPyId != 38){
-            py_str += root.pingying_character_lut[py.firstPyId];
+        if(py.first_py_id != 38){
+            py_str += root.pingying_character_lut[py.first_py_id];
         }
-        if(py.secondPyId != 38){
-            py_str += root.pingying_character_lut[py.secondPyId];
+        if(py.second_py_id != 38){
+            py_str += root.pingying_character_lut[py.second_py_id];
         }
-        if(py.thirdPyId != 38){
-            py_str += root.pingying_character_lut[py.thirdPyId];
+        if(py.third_py_id != 38){
+            py_str += root.pingying_character_lut[py.third_py_id];
         }
-        tone_str += root.tone_lut[py.toneId];
+        tone_str += root.tone_lut[py.tone_id];
         //alert("pys: " + py_str + ".  tone:" + tone_str);
 
         var fpy = new Object();
@@ -162,26 +162,26 @@ chinesewordCommonUtils.factory('WordUtils', ['PingyingCharacter', 'Tone', functi
         fpy.tone = '';
         if(py_str.length == 1){
             fpy.two = py_str;
-            if(py.toneId == 5){
+            if(py.tone_id == 5){
                 fpy.toneBoldAtTwo = tone_str;
-            }else if(py.toneId != 1){
+            }else if(py.tone_id != 1){
                 fpy.toneNextToTwo = tone_str;
             }
         }else if(py_str.length == 2){
             fpy.two = py_str[0];
             fpy.three = py_str[1];
-            if(py.toneId == 5){
+            if(py.tone_id == 5){
                 fpy.one = tone_str;
-            }else if(py.toneId != 1){
+            }else if(py.tone_id != 1){
                 fpy.tone = tone_str;
             }
         }else if(py_str.length == 3){
             fpy.two = py_str[0];
             fpy.three = py_str[1];
             fpy.four = py_str[2];
-            if(py.toneId == 5){
+            if(py.tone_id == 5){
                 fpy.one = tone_str;
-            }else if(py.toneId != 1){
+            }else if(py.tone_id != 1){
                 fpy.tone = tone_str;
             }
         }

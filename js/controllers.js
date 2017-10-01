@@ -188,8 +188,10 @@ chinesewordControllers.controller('Test2Ctrl', ['$scope', 'Test', 'WordlistAll',
             });
         }
     }]);
-chinesewordControllers.controller('TestCtrl', ['$scope', 'Test', 'WordlistAll', 'WordUtils', 'WordPingying', 'WordlistWord', 'TestWordlist',
-    function ($scope, Test, WordlistAll, WordUtils, WordPingying, WordlistWord, TestWordlist) {
+chinesewordControllers.controller(
+    'TestCtrl', ['$scope', 'Test', 'WordlistAll','Pingying', 'WordUtils',
+    'WordPingying', 'WordlistWord', 'TestWordlist',
+    function ($scope, Test, WordlistAll, Pingying, WordUtils, WordPingying, WordlistWord, TestWordlist) {
         $scope.tests = Test.list();
         $scope.isDirty = false;
         $scope.isShowLetter = true;
@@ -216,6 +218,9 @@ chinesewordControllers.controller('TestCtrl', ['$scope', 'Test', 'WordlistAll', 
             if(!$scope.isPingyingEditHoverEnabled)
                 return;
             word.isShowPingyingSelect = true;
+            if (typeof word.pingying.id == 'undefined'){
+                return;
+            }
             word.selected_py_id = word.pingying.id;
             if(word.pys_container_width == undefined){
                 word.pys_container_width = "26px";
@@ -224,20 +229,18 @@ chinesewordControllers.controller('TestCtrl', ['$scope', 'Test', 'WordlistAll', 
                                     more than once due to the time it takes to complete the asyn call*/
                 return;
             }
-            if(word.pingyings == undefined){
-                var wordpingyings = WordPingying.list({word : word.symbol}, function (response){
-                    word.pys_container_width = "" + wordpingyings.length * 26 + "px";
-                    word.pingyings = [];
-                    for(var i = 0; i<wordpingyings.length; i++){
-                        var py = WordUtils.toFormattedPingyingForEdit(wordpingyings[i].pingying);
-                        if (word.pingying.id == wordpingyings[i].pingying.id){
-                            word.currentPingying = i;
-                            word.selected = i;
-                        }
-                        py.id = wordpingyings[i].pingying.id;
-                        word.pingyings.push(py);
+            if(word.selectable_pingyings == undefined && word.pingyings.length > 1){
+                word.pys_container_width = "" + word.pingyings.length * 26 + "px";
+                word.selectable_pingyings = [];
+                for(var i = 0; i<word.pingyings.length; i++){
+                    var py = WordUtils.toFormattedPingyingForEdit(word.pingyings[i]);
+                    if (word.pingying.id == word.pingyings[i].id){
+                        word.currentPingying = i;
+                        word.selected = i;
                     }
-                });
+                    py.id = word.pingyings[i].id;
+                    word.selectable_pingyings.push(py);
+                }
             }
         }
         $scope.isExistingWordlist = function isExistingWordlist(wordlist){
@@ -357,18 +360,18 @@ chinesewordControllers.controller('TestCtrl', ['$scope', 'Test', 'WordlistAll', 
             for(var i = 0; i < $scope.testWordlists.length; i++){
                 WordlistWord.list({wordlistId:$scope.testWordlists[i].wordlist_id}, function (response) {
                     angular.forEach(response, function (item) {
-                        var word = item;
-                        word.isShowPingyingSelect = false;
-                        if(WordUtils.hasPingying(word))
+                        var wordlistWord = item;
+                        wordlistWord.isShowPingyingSelect = false;
+                        if(WordUtils.hasPingying(wordlistWord))
                             $scope.total_words ++;
-                        word.formatted_word = WordUtils.toFormattedWord(word, WordUtils.FormatStyle.STANDARD);//WordUtils
-                        if((word.symbol == undefined || word.symbol.trim() == "")){
+                        wordlistWord.formatted_word = WordUtils.toFormattedWord(wordlistWord, WordUtils.FormatStyle.STANDARD);//WordUtils
+                        if((wordlistWord.symbol == undefined || wordlistWord.symbol.trim() == "")){
                             if(words.length > 0){
                                 $scope.lines.push(words);
                                 words = [];
                             }
                         }else{
-                            words.push(word);
+                            words.push(wordlistWord);
                         }
                     });
                     if(words.length > 0){
