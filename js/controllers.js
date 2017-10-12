@@ -358,7 +358,8 @@ chinesewordControllers.controller(
             $scope.lines = [];
 
             for(var i = 0; i < $scope.testWordlists.length; i++){
-                WordlistWord.list({wordlistId:$scope.testWordlists[i].wordlist_id}, function (response) {
+                $scope.testWordlists[i].wordlistWords
+                    = WordlistWord.list({wordlistId:$scope.testWordlists[i].wordlist_id}, function (response) {
                     angular.forEach(response, function (item) {
                         var wordlistWord = item;
                         wordlistWord.isShowPingyingSelect = false;
@@ -390,15 +391,15 @@ chinesewordControllers.controller(
             $scope.total_words = 0;
             $scope.lines = [];
             var wordMap = {};
-            for(var i = 0; i < $scope.test.wordlists.length; i++){
-                for(var j = 0; j < $scope.test.wordlists[i].words.length; j++){
-                    var word = $scope.test.wordlists[i].words[j];
+            for(var i = 0; i < $scope.testWordlists.length; i++){
+                for(var j = 0; j < $scope.testWordlists[i].wordlistWords.length; j++){
+                    var word = $scope.testWordlists[i].wordlistWords[j];
                     if(WordUtils.hasPingying(word)) {
                         // note this may overwrite the word with the same word.id
                         // but we will deal with this later
                         // as we also need to deal with multiple pingyings for a word
                         // so there should be a nested map that stores all pingying variants
-                        wordMap[word.wordPingyingId.word.id] = word;
+                        wordMap[word.id] = word;
                     }
                 }
             };
@@ -441,13 +442,14 @@ chinesewordControllers.controller(
             if(word.pingying.id == py.id){return;}
             word.selected_py_id = py.id;
             var wordUpdate = WordlistWord.get({id : word.id}, function(response){
-                delete wordUpdate.wordPingyingId.pingying;
-                wordUpdate.wordPingyingId.pingying = new Object();
-                wordUpdate.wordPingyingId.pingying.id = py.id;
-                delete wordUpdate.wordPingyingId.word;
-                wordUpdate.wordPingyingId.word = new Object();
-                wordUpdate.wordPingyingId.word.id = word.id;
-                delete wordUpdate.pingying;
+                //delete wordUpdate.wordPingyingId.pingying;
+                //wordUpdate.wordPingyingId.pingying = new Object();
+                //wordUpdate.wordPingyingId.pingying.id = py.id;
+                //delete wordUpdate.wordPingyingId.word;
+                //wordUpdate.wordPingyingId.word = new Object();
+                //wordUpdate.wordPingyingId.word.id = word.id;
+                //delete wordUpdate.pingying;
+                wordUpdate.pingying_id = py.id;
                 wordUpdate.$update({id : word.id}, function (retWord){
                     word.formatted_word = WordUtils.toFormattedWord(retWord, WordUtils.FormatStyle.STANDARD);
                     word.pingying = retWord.pingying;
